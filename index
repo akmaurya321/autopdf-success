@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPDF Collector - Payment Gateway</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 40px;">
+  <h1>Welcome to AutoPDF Collector Payment Page</h1>
+  <p>If you’re seeing this page, your GitHub Pages site is active.</p>
+  <p><a href="payment-success.html">Click here to view payment success page</a></p>
+</body>
+</html>
