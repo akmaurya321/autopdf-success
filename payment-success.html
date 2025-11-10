@@ -61,44 +61,67 @@
     <a href="#" class="btn" id="closeBtn">Return to Dashboard</a>
     <p class="loading" id="statusText">Activating your premium account...</p>
   </div>
+
   <script>
-  const EXTENSION_ID = 'eedbbkfabnjgblpbkdncmnbnlmagpjkh';
-  const urlParams = new URLSearchParams(window.location.search);
-  const plan = urlParams.get('plan') || 'monthly';
-  const paymentId = urlParams.get('razorpay_payment_id') || 'N/A';
-  const plans = {
-    weekly: { name: 'Weekly Plan', duration: '7 days', price: '₹3' },
-    monthly: { name: 'Monthly Plan', duration: '30 days', price: '₹11' },
-    sixmonth: { name: '6-Month Plan', duration: '180 days', price: '₹29' },
-    yearly: { name: 'Yearly Plan', duration: '365 days', price: '₹51' }
-  };
-  const planData = plans[plan] || plans.monthly;
-  document.getElementById('planName').textContent = planData.name;
-  document.getElementById('planDuration').textContent = `Duration: ${planData.duration}`;
-  document.getElementById('planPrice').textContent = `Amount: ${planData.price}`;
-  try {
-    chrome.runtime.sendMessage(EXTENSION_ID, {
-      type: 'PAYMENT_SUCCESS',
-      plan,
-      paymentId,
-      timestamp: Date.now()
-    }, (response) => {
-      if (chrome.runtime.lastError) {
-        document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
-      } else if (response && response.ok) {
-        document.getElementById('statusText').textContent = '✅ Premium activated successfully!';
-      } else {
-        document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
+    /***************************************************************
+     🔴 IMPORTANT: Update your Chrome Extension ID here only once
+    ***************************************************************/
+    const EXTENSION_ID = 'pdmcpnggekpflcjgajgajhpepggiibka'; // ✅ your extension ID
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get('plan') || 'monthly';
+    const paymentId = urlParams.get('razorpay_payment_id') || 'N/A';
+
+    const plans = {
+      weekly: { name: 'Weekly Plan', duration: '7 days', price: '₹3' },
+      monthly: { name: 'Monthly Plan', duration: '30 days', price: '₹11' },
+      sixmonth: { name: '6-Month Plan', duration: '180 days', price: '₹29' },
+      yearly: { name: 'Yearly Plan', duration: '365 days', price: '₹51' }
+    };
+
+    const planData = plans[plan] || plans.monthly;
+    document.getElementById('planName').textContent = planData.name;
+    document.getElementById('planDuration').textContent = `Duration: ${planData.duration}`;
+    document.getElementById('planPrice').textContent = `Amount: ${planData.price}`;
+
+    // Send payment success message to Chrome extension
+    async function notifyExtension() {
+      try {
+        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+          chrome.runtime.sendMessage(EXTENSION_ID, {
+            type: 'PAYMENT_SUCCESS',
+            plan,
+            paymentId,
+            timestamp: Date.now()
+          }, (response) => {
+            if (chrome.runtime.lastError) {
+              document.getElementById('statusText').textContent =
+                'Activation complete. You can close this page.';
+            } else if (response?.ok) {
+              document.getElementById('statusText').textContent =
+                '✅ Premium activated successfully!';
+            } else {
+              document.getElementById('statusText').textContent =
+                'Activation complete. You can now close this page.';
+            }
+          });
+        } else {
+          document.getElementById('statusText').textContent =
+            'Please open your extension to complete activation.';
+        }
+      } catch (e) {
+        document.getElementById('statusText').textContent =
+          'Error sending activation message.';
+        console.error(e);
       }
+    }
+    notifyExtension();
+
+    document.getElementById('closeBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (window.opener) window.close();
+      else window.history.back();
     });
-  } catch (e) {
-    document.getElementById('statusText').textContent = 'Please open your extension to complete activation.';
-  }
-  document.getElementById('closeBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    if (window.opener) window.close();
-    else window.history.back();
-  });
   </script>
 </body>
 </html>
