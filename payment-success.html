@@ -9,43 +9,29 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
+      color: white; display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
     }
     .container {
-      background: white;
-      color: #333;
-      padding: 50px;
-      border-radius: 12px;
-      text-align: center;
-      max-width: 500px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-      animation: fadeIn 0.8s ease;
+      background: white; color: #333; padding: 50px; border-radius: 12px; text-align: center;
+      max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: fadeIn 0.8s ease;
     }
-    .success-icon {
-      width: 80px; height: 80px; background: #4CAF50;
-      border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; margin: 0 auto 30px;
-      font-size: 50px; color: white; box-shadow: 0 4px 15px rgba(76,175,80,0.4);
-    }
+    .success-icon { width: 80px; height: 80px; background: #4CAF50; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;
+      font-size: 50px; color: white; box-shadow: 0 4px 15px rgba(76,175,80,0.4); }
     h1 { font-size: 28px; margin-bottom: 15px; color: #4CAF50; }
     p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #666; }
     .plan-info { background: #f5f7fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
     .plan-info h2 { font-size: 20px; color: #667eea; margin-bottom: 10px; }
     .plan-info .detail { font-size: 14px; color: #666; margin: 5px 0; }
     .btn {
-      display: inline-block; padding: 14px 30px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; text-decoration: none; border-radius: 6px;
-      font-weight: 600; transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: inline-block; padding: 14px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; text-decoration: none; border-radius: 6px; font-weight: 600;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .loading { margin-top: 20px; font-size: 14px; color: #999; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);}}
   </style>
 </head>
 <body>
@@ -57,48 +43,68 @@
       <h2 id="planName">Loading plan details...</h2>
       <div class="detail" id="planDuration"></div>
       <div class="detail" id="planPrice"></div>
+      <div class="detail" id="txn"></div>
     </div>
     <a href="#" class="btn" id="closeBtn">Return to Dashboard</a>
     <p class="loading" id="statusText">Activating your premium account...</p>
   </div>
   <script>
-  const EXTENSION_ID = 'cjlmeihkncefpgecejekkhifahgbkdgf';
-  const urlParams = new URLSearchParams(window.location.search);
-  const plan = urlParams.get('plan') || 'monthly';
-  const paymentId = urlParams.get('razorpay_payment_id') || 'N/A';
-  const plans = {
-    weekly: { name: 'Weekly Plan', duration: '7 days', price: '₹3' },
-    monthly: { name: 'Monthly Plan', duration: '30 days', price: '₹11' },
-    sixmonth: { name: '6-Month Plan', duration: '180 days', price: '₹29' },
-    yearly: { name: 'Yearly Plan', duration: '365 days', price: '₹51' }
-  };
-  const planData = plans[plan] || plans.monthly;
-  document.getElementById('planName').textContent = planData.name;
-  document.getElementById('planDuration').textContent = `Duration: ${planData.duration}`;
-  document.getElementById('planPrice').textContent = `Amount: ${planData.price}`;
-  try {
-    chrome.runtime.sendMessage(EXTENSION_ID, {
-      type: 'PAYMENT_SUCCESS',
-      plan,
-      paymentId,
-      timestamp: Date.now()
-    }, (response) => {
-      if (chrome.runtime.lastError) {
-        document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
-      } else if (response && response.ok) {
-        document.getElementById('statusText').textContent = '✅ Premium activated successfully!';
-      } else {
-        document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
+    const EXTENSION_ID = "cjlmeihkncefpgecejekkhifahgbkdgf";
+    const qp = new URLSearchParams(window.location.search);
+    const rawPlan = (qp.get('plan') || 'monthly').toLowerCase();
+    const paymentId = qp.get('razorpay_payment_id') || qp.get('payment_id') || qp.get('transaction_id') || '';
+
+    const normalize = (p) => {
+      const map = { 'halfyearly':'sixmonth', 'half-yearly':'sixmonth', '6month':'sixmonth', 'sixmonth':'sixmonth',
+                    'weekly':'weekly', 'monthly':'monthly', 'yearly':'yearly' };
+      return map[p] || 'monthly';
+    };
+    const plan = normalize(rawPlan);
+
+    const plans = {
+      weekly:  { name: 'Weekly Plan',    duration: '7 days',   price: '₹3'  },
+      monthly: { name: 'Monthly Plan',   duration: '30 days',  price: '₹11' },
+      sixmonth:{ name: '6-Month Plan',   duration: '180 days', price: '₹29' },
+      yearly:  { name: 'Yearly Plan',    duration: '365 days', price: '₹51' }
+    };
+    const meta = plans[plan] || plans.monthly;
+
+    document.getElementById('planName').textContent = meta.name;
+    document.getElementById('planDuration').textContent = `Duration: ${meta.duration}`;
+    document.getElementById('planPrice').textContent = `Amount: ${meta.price}`;
+    document.getElementById('txn').textContent = paymentId ? `Payment ID: ${paymentId}` : '';
+
+    function strictActivate() {
+      if (!paymentId) {
+        document.getElementById('statusText').textContent = 'Payment ID missing. If you paid, open the extension dashboard to complete activation.';
+        return;
       }
+      try {
+        chrome.runtime.sendMessage(EXTENSION_ID, {
+          action: 'activatePremium',
+          plan: plan,
+          transactionId: paymentId,
+          activatedAt: Date.now()
+        }, (resp) => {
+          if (chrome.runtime.lastError) {
+            document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
+          } else if (resp && resp.success) {
+            document.getElementById('statusText').textContent = '✅ Premium activated successfully!';
+          } else {
+            document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
+          }
+        });
+      } catch (e) {
+        document.getElementById('statusText').textContent = 'Please open your extension to complete activation.';
+      }
+    }
+
+    document.getElementById('closeBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (window.opener) window.close(); else window.history.back();
     });
-  } catch (e) {
-    document.getElementById('statusText').textContent = 'Please open your extension to complete activation.';
-  }
-  document.getElementById('closeBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    if (window.opener) window.close();
-    else window.history.back();
-  });
+
+    strictActivate();
   </script>
 </body>
 </html>
