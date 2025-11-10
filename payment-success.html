@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment Successful - AutoPDF Collector</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -21,7 +16,6 @@
       min-height: 100vh;
       padding: 20px;
     }
-
     .container {
       background: white;
       color: #333;
@@ -32,79 +26,26 @@
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       animation: fadeIn 0.8s ease;
     }
-
     .success-icon {
-      width: 80px;
-      height: 80px;
-      background: #4CAF50;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 30px;
-      font-size: 50px;
-      color: white;
-      box-shadow: 0 4px 15px rgba(76,175,80,0.4);
+      width: 80px; height: 80px; background: #4CAF50;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 30px;
+      font-size: 50px; color: white; box-shadow: 0 4px 15px rgba(76,175,80,0.4);
     }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 15px;
-      color: #4CAF50;
-    }
-
-    p {
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      color: #666;
-    }
-
-    .plan-info {
-      background: #f5f7fa;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-    }
-
-    .plan-info h2 {
-      font-size: 20px;
-      color: #667eea;
-      margin-bottom: 10px;
-    }
-
-    .plan-info .detail {
-      font-size: 14px;
-      color: #666;
-      margin: 5px 0;
-    }
-
+    h1 { font-size: 28px; margin-bottom: 15px; color: #4CAF50; }
+    p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #666; }
+    .plan-info { background: #f5f7fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+    .plan-info h2 { font-size: 20px; color: #667eea; margin-bottom: 10px; }
+    .plan-info .detail { font-size: 14px; color: #666; margin: 5px 0; }
     .btn {
-      display: inline-block;
-      padding: 14px 30px;
+      display: inline-block; padding: 14px 30px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      color: white; text-decoration: none; border-radius: 6px;
+      font-weight: 600; transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    .loading {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #999;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .loading { margin-top: 20px; font-size: 14px; color: #999; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -112,49 +53,29 @@
     <div class="success-icon">✓</div>
     <h1>Payment Successful!</h1>
     <p>Thank you for upgrading to <strong>AutoPDF Collector Premium</strong>. Your account is now active.</p>
-
     <div class="plan-info" id="planInfo">
       <h2 id="planName">Loading plan details...</h2>
       <div class="detail" id="planDuration"></div>
       <div class="detail" id="planPrice"></div>
     </div>
-
     <a href="#" class="btn" id="closeBtn">Return to Dashboard</a>
-
     <p class="loading" id="statusText">Activating your premium account...</p>
   </div>
-
   <script>
-  /***************************************************************
-   🔴 IMPORTANT STEP AFTER UPLOADING EXTENSION TO CHROME 🔴
-
-   1) Go to: chrome://extensions
-   2) Turn ON “Developer mode” (top right)
-   3) Find “AutoPDF Collector” → copy the “ID” shown there
-   4) Paste it below in place of YOUR_EXTENSION_ID_HERE
-   5) Save this file (only once), then reload the extension
-  ***************************************************************/
-  const EXTENSION_ID = 'YOUR_EXTENSION_ID_HERE'; // <-- paste your real Chrome Extension ID here
-
-  // Extract plan & payment info
+  const EXTENSION_ID = 'YOUR_EXTENSION_ID_HERE';
   const urlParams = new URLSearchParams(window.location.search);
   const plan = urlParams.get('plan') || 'monthly';
   const paymentId = urlParams.get('razorpay_payment_id') || 'N/A';
-
   const plans = {
     weekly: { name: 'Weekly Plan', duration: '7 days', price: '₹3' },
     monthly: { name: 'Monthly Plan', duration: '30 days', price: '₹11' },
     sixmonth: { name: '6-Month Plan', duration: '180 days', price: '₹29' },
     yearly: { name: 'Yearly Plan', duration: '365 days', price: '₹51' }
   };
-
   const planData = plans[plan] || plans.monthly;
-
   document.getElementById('planName').textContent = planData.name;
   document.getElementById('planDuration').textContent = `Duration: ${planData.duration}`;
   document.getElementById('planPrice').textContent = `Amount: ${planData.price}`;
-
-  // Send activation message to Chrome extension
   try {
     chrome.runtime.sendMessage(EXTENSION_ID, {
       type: 'PAYMENT_SUCCESS',
@@ -163,7 +84,6 @@
       timestamp: Date.now()
     }, (response) => {
       if (chrome.runtime.lastError) {
-        console.warn('Extension connection issue:', chrome.runtime.lastError);
         document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
       } else if (response && response.ok) {
         document.getElementById('statusText').textContent = '✅ Premium activated successfully!';
@@ -173,9 +93,7 @@
     });
   } catch (e) {
     document.getElementById('statusText').textContent = 'Please open your extension to complete activation.';
-    console.error('Chrome messaging error:', e);
   }
-
   document.getElementById('closeBtn').addEventListener('click', (e) => {
     e.preventDefault();
     if (window.opener) window.close();
@@ -184,4 +102,3 @@
   </script>
 </body>
 </html>
-
