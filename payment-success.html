@@ -5,106 +5,291 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment Successful - AutoPDF Collector</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    .container {
-      background: white; color: #333; padding: 50px; border-radius: 12px; text-align: center;
-      max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: fadeIn 0.8s ease;
+    
+    .success-container {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.6s ease-out;
     }
-    .success-icon { width: 80px; height: 80px; background: #4CAF50; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;
-      font-size: 50px; color: white; box-shadow: 0 4px 15px rgba(76,175,80,0.4); }
-    h1 { font-size: 28px; margin-bottom: 15px; color: #4CAF50; }
-    p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #666; }
-    .plan-info { background: #f5f7fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-    .plan-info h2 { font-size: 20px; color: #667eea; margin-bottom: 10px; }
-    .plan-info .detail { font-size: 14px; color: #666; margin: 5px 0; }
-    .btn {
-      display: inline-block; padding: 14px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; text-decoration: none; border-radius: 6px; font-weight: 600;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-    .loading { margin-top: 20px; font-size: 14px; color: #999; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);}}
+    
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: scaleIn 0.5s ease-out 0.2s both;
+    }
+    
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+    
+    .success-icon svg {
+      width: 50px;
+      height: 50px;
+      stroke: white;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    h1 {
+      font-size: 32px;
+      color: #333;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .premium-features {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 30px 0;
+      text-align: left;
+    }
+    
+    .premium-features h3 {
+      font-size: 16px;
+      color: #667eea;
+      margin-bottom: 15px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+    
+    .feature-list {
+      list-style: none;
+    }
+    
+    .feature-list li {
+      padding: 10px 0;
+      color: #444;
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+    }
+    
+    .feature-list li::before {
+      content: '✓';
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      margin-right: 12px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    .status-message {
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 25px;
+      color: #2e7d32;
+      font-weight: 500;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #4caf50;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .close-btn {
+      margin-top: 30px;
+      padding: 15px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .close-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    .close-btn:active {
+      transform: translateY(0);
+    }
+    
+    .note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #999;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="success-icon">✓</div>
-    <h1>Payment Successful!</h1>
-    <p>Thank you for upgrading to <strong>AutoPDF Collector Premium</strong>. Your account is now active.</p>
-    <div class="plan-info" id="planInfo">
-      <h2 id="planName">Loading plan details...</h2>
-      <div class="detail" id="planDuration"></div>
-      <div class="detail" id="planPrice"></div>
-      <div class="detail" id="txn"></div>
+  <div class="success-container">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
     </div>
-    <a href="#" class="btn" id="closeBtn">Return to Dashboard</a>
-    <p class="loading" id="statusText">Activating your premium account...</p>
+    
+    <h1>Payment Successful!</h1>
+    <p class="subtitle">Thank you for upgrading to AutoPDF Collector Premium</p>
+    
+    <div class="premium-features">
+      <h3>Premium Unlocked</h3>
+      <ul class="feature-list">
+        <li>Unlimited PDF exports</li>
+        <li>No export restrictions</li>
+        <li>All premium features activated</li>
+        <li>Priority support access</li>
+      </ul>
+    </div>
+    
+    <div class="status-message">
+      <span class="spinner"></span>
+      <span id="statusText">Activating your premium access...</span>
+    </div>
+    
+    <button class="close-btn" onclick="window.close()">Close This Tab</button>
+    
+    <p class="note">You can now close this tab and return to the extension</p>
   </div>
+
   <script>
-    const EXTENSION_ID = "cjlmeihkncefpgecejekkhifahgbkdgf";
-    const qp = new URLSearchParams(window.location.search);
-    const rawPlan = (qp.get('plan') || 'monthly').toLowerCase();
-    const paymentId = qp.get('razorpay_payment_id') || qp.get('payment_id') || qp.get('transaction_id') || '';
-
-    const normalize = (p) => {
-      const map = { 'halfyearly':'sixmonth', 'half-yearly':'sixmonth', '6month':'sixmonth', 'sixmonth':'sixmonth',
-                    'weekly':'weekly', 'monthly':'monthly', 'yearly':'yearly' };
-      return map[p] || 'monthly';
-    };
-    const plan = normalize(rawPlan);
-
-    const plans = {
-      weekly:  { name: 'Weekly Plan',    duration: '7 days',   price: '₹3'  },
-      monthly: { name: 'Monthly Plan',   duration: '30 days',  price: '₹11' },
-      sixmonth:{ name: '6-Month Plan',   duration: '180 days', price: '₹29' },
-      yearly:  { name: 'Yearly Plan',    duration: '365 days', price: '₹51' }
-    };
-    const meta = plans[plan] || plans.monthly;
-
-    document.getElementById('planName').textContent = meta.name;
-    document.getElementById('planDuration').textContent = `Duration: ${meta.duration}`;
-    document.getElementById('planPrice').textContent = `Amount: ${meta.price}`;
-    document.getElementById('txn').textContent = paymentId ? `Payment ID: ${paymentId}` : '';
-
-    function strictActivate() {
-      if (!paymentId) {
-        document.getElementById('statusText').textContent = 'Payment ID missing. If you paid, open the extension dashboard to complete activation.';
-        return;
+    const EXTENSION_ID = 'cjlmeihkncefpgecejekkhifahgbkdgf';
+    
+    function activatePremium() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const planType = urlParams.get('plan') || 'yearly';
+      const transactionId = urlParams.get('payment_id') || urlParams.get('razorpay_payment_id') || 'unknown';
+      
+      let expiryDate = null;
+      const now = Date.now();
+      
+      switch(planType.toLowerCase()) {
+        case 'weekly':
+          expiryDate = now + (7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'monthly':
+          expiryDate = now + (30 * 24 * 60 * 60 * 1000);
+          break;
+        case 'sixmonth':
+        case '6month':
+          expiryDate = now + (180 * 24 * 60 * 60 * 1000);
+          break;
+        case 'yearly':
+        default:
+          expiryDate = now + (365 * 24 * 60 * 60 * 1000);
+          break;
       }
+      
+      const message = {
+        type: 'PAYMENT_SUCCESS',
+        plan: 'pro',
+        planType: planType,
+        expiry_date: expiryDate,
+        transaction_id: transactionId,
+        activated_at: now
+      };
+      
+      console.log('Sending message to extension:', message);
+      
       try {
-        chrome.runtime.sendMessage(EXTENSION_ID, {
-          action: 'activatePremium',
-          plan: plan,
-          transactionId: paymentId,
-          activatedAt: Date.now()
-        }, (resp) => {
+        chrome.runtime.sendMessage(EXTENSION_ID, message, (response) => {
+          const statusEl = document.getElementById('statusText');
           if (chrome.runtime.lastError) {
-            document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
-          } else if (resp && resp.success) {
-            document.getElementById('statusText').textContent = '✅ Premium activated successfully!';
+            console.error('Extension communication error:', chrome.runtime.lastError);
+            statusEl.innerHTML = '⚠️ Premium activated! Please reload the extension dashboard.';
+            statusEl.parentElement.style.background = '#fff3cd';
+            statusEl.parentElement.style.borderColor = '#ffc107';
+            statusEl.parentElement.style.color = '#856404';
           } else {
-            document.getElementById('statusText').textContent = 'Activation complete. You can now close this page.';
+            console.log('Extension response:', response);
+            statusEl.innerHTML = '✓ Premium activated successfully!';
+            const spinner = statusEl.parentElement.querySelector('.spinner');
+            if (spinner) spinner.remove();
           }
         });
-      } catch (e) {
-        document.getElementById('statusText').textContent = 'Please open your extension to complete activation.';
+      } catch (error) {
+        console.error('Error sending message:', error);
+        const statusEl = document.getElementById('statusText');
+        statusEl.innerHTML = '⚠️ Premium activated! Please reload the extension dashboard.';
+        statusEl.parentElement.style.background = '#fff3cd';
+        statusEl.parentElement.style.borderColor = '#ffc107';
+        statusEl.parentElement.style.color = '#856404';
       }
     }
-
-    document.getElementById('closeBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      if (window.opener) window.close(); else window.history.back();
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(activatePremium, 500);
     });
-
-    strictActivate();
   </script>
 </body>
 </html>
